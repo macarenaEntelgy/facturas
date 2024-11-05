@@ -64,7 +64,7 @@
                 />
             </Panel>
             <Panel id="list">
-
+			<!-- Actualizamos el modelo para que use el modelo JSON "invoicesModel" con "facturasCombinadas" -->
                 <List
                     id="invoicesList"
                     headerText="{i18n>invoicesHeaderList}"
