@@ -1,0 +1,25 @@
+/* Enter your custom styles here */
+.text-success {
+    color: green; /* Color para "Factura procesada" */
+}
+
+.text-warning {
+    color: orange; /* Color para "Factura en proceso" */
+}
+
+.text-error {
+    color: red; /* Color para "Factura rechazada" */
+}
+
+/* Extiende las clases de SAPUI5 si es necesario */
+.sapMText.sapMObjLTitle.text-success {
+    color: green;
+}
+
+.sapMText.sapMObjLTitle.text-warning {
+    color: orange;
+}
+
+.sapMText.sapMObjLTitle.text-error {
+    color: red;
+}

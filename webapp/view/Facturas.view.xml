@@ -1,0 +1,96 @@
+<mvc:View
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m"
+    xmlns:core="sap.ui.core"
+    controllerName="dev.facturas.controller.Facturas"
+    displayBlock="true"
+>
+    <Page
+        id="page"
+        title="{i18n>title}"
+    >
+        <content>
+            <Panel
+                id="panel"
+                headerText="{i18n>selectionScreen}"
+            >
+                <Label
+                    id="labelShipName"
+                    labelFor="shipName"
+                    text="{i18n>shipName}"
+                    class="sapUiSmallMargin"
+                />
+                <Input
+                    id="shipName"
+                    width="200px"
+                    class="sapUiSmallMarginEnd"
+                />
+                <Label
+                    id="labelInvoiceNumber"
+                    labelFor="invoiceNumber"
+                    text="{i18n>invoiceNumber}"
+                    class="sapUiSmallMargin"
+                />
+                <Input
+                    id="invoiceNumber"
+                    width="200px"
+                    class="sapUiSmallMarginEnd"
+                />
+                <Label
+                    id="labelDate"
+                    text="{i18n>date}"
+                    class="sapUiSmallMargin"
+                />
+                <DatePicker
+                    id="filterDate"
+                    textAlign="Initial"
+                    displayFormat="dd/MM/yyyy"
+                    width="200px"
+                    placeholder="por ejemplo 01/01/2024"
+                />
+                <Button
+                    id="btnFilter"
+                    text="{i18n>btnFilter}"
+                    icon="sap-icon://filter"
+                    press="onFilter"
+                    class="sapUiSmallMarginEnd"
+                />
+                <Button
+                    id="btnClearFilter"
+                    text="{i18n>btnClearFilter}"
+                    icon="sap-icon://clear-filter"
+                    press="onClearFilter"
+                    class="sapUiSmallMarginEnd"
+                />
+            </Panel>
+            <Panel id="list">
+
+                <List
+                    id="invoicesList"
+                    headerText="{i18n>invoicesHeaderList}"
+                    class="sapUiResponsiveMargin"
+                    width="auto"
+                    items="{invoicesModel>/facturasCombinadas}">
+                    <ObjectListItem
+                        id="objListItem"
+                        title="Nombre: {invoicesModel>Descripcion}"
+                        number="{invoicesModel>GrossAmount}"
+                        numberState="{= ${invoicesModel>Estado} === 'S' ? 'Success' : ${invoicesModel>Estado} === 'W' ? 'Warning' : ${invoicesModel>Estado} === 'E' ? 'Error' : 'None' }"
+                        numberUnit="ARS">
+                        <attributes>
+                            <ObjectAttribute
+                                id="fecha"
+                                text="Fecha: {invoicesModel>Fecha}"/>
+                            <ObjectAttribute
+                                id="invNum"
+                                text="Nro. de Factura: {invoicesModel>InvoiceNumber}"/>
+                            <ObjectAttribute
+                                id="status"
+                                text="{= ${invoicesModel>Estado} === 'S' ? 'Factura PROCESADA' : ${invoicesModel>Estado} === 'W' ? 'Factura EN PROCESO' : ${invoicesModel>Estado} === 'E' ? 'Factura RECHAZADA' : 'Estado desconocido' }"/>
+                        </attributes>
+                    </ObjectListItem>
+                </List>
+            </Panel>
+        </content>
+    </Page>
+</mvc:View>
