@@ -151,7 +151,48 @@ sap.ui.define([
 
                 // Aplicar un filtro vacío para limpiar la lista
                 oBinding.filter([]);
+            },
+
+        // Método para manejar el evento de mostrar PDF
+        onShowPdfPress: function (oEvent) {
+            // Obtener la codificación Base64 desde el CustomData del botón
+            var sPdfBase64 = oEvent.getSource().data("pdfBase64");
+
+            if (!sPdfBase64) {
+                MessageToast.show("No se encontró el PDF para esta factura.");
+                return;
             }
+
+            // Crear la URL del PDF en formato base64
+            var sPdfUrl = "data:application/pdf;base64," + sPdfBase64;
+
+            // Crear un iframe para mostrar el PDF en un diálogo modal
+            if (!this.oDialog) {
+                this.oDialog = new sap.m.Dialog({
+                    title: "Vista Previa de la Factura",
+                    contentWidth: "100%",
+                    contentHeight: "100%",
+                    verticalScrolling: false,
+                    horizontalScrolling: false,
+                    resizable: true,
+                    content: new sap.ui.core.HTML({
+                        content: "<iframe src='" + sPdfUrl + "' width='100%' height='100%' style='border:none;'></iframe>"
+                    }),
+                    endButton: new sap.m.Button({
+                        text: "Cerrar",
+                        press: function () {
+                            this.oDialog.close();
+                        }.bind(this)
+                    })
+                });
+            } else {
+                // Actualizar el contenido del iframe en caso de que el diálogo ya exista
+                this.oDialog.getContent()[0].setContent("<iframe src='" + sPdfUrl + "' width='100%' height='100%' style='border:none;'></iframe>");
+            }
+
+            this.oDialog.open();
+        }
+        
         });
     }
 );

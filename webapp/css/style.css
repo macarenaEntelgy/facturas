@@ -1,25 +1,16 @@
 /* Enter your custom styles here */
-.text-success {
-    color: green; /* Color para "Factura procesada" */
+.grossAmount {
+    font-size: 20px; /* Ajusta el tamaño según tus necesidades */
+    font-weight: bold; /* Opcional: para hacer el número en negrita */
+    margin-top: 10px;
 }
 
-.text-warning {
-    color: orange; /* Color para "Factura en proceso" */
+.descripcion{
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 10px;
 }
 
-.text-error {
-    color: red; /* Color para "Factura rechazada" */
-}
-
-/* Extiende las clases de SAPUI5 si es necesario */
-.sapMText.sapMObjLTitle.text-success {
-    color: green;
-}
-
-.sapMText.sapMObjLTitle.text-warning {
-    color: orange;
-}
-
-.sapMText.sapMObjLTitle.text-error {
-    color: red;
+.objListAtribute{
+    margin-top: 10px;
 }

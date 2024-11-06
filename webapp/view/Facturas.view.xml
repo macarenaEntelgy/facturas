@@ -12,84 +12,90 @@
         <content>
             <Panel
                 id="panel"
-                headerText="{i18n>selectionScreen}"
-            >
+                headerText="{i18n>selectionScreen}">
                 <Label
                     id="labelShipName"
                     labelFor="shipName"
                     text="{i18n>shipName}"
-                    class="sapUiSmallMargin"
-                />
+                    class="sapUiSmallMargin"/>
                 <Input
                     id="shipName"
                     width="200px"
-                    class="sapUiSmallMarginEnd"
-                />
+                    class="sapUiSmallMarginEnd"/>
                 <Label
                     id="labelInvoiceNumber"
                     labelFor="invoiceNumber"
                     text="{i18n>invoiceNumber}"
-                    class="sapUiSmallMargin"
-                />
+                    class="sapUiSmallMargin"/>
                 <Input
                     id="invoiceNumber"
                     width="200px"
-                    class="sapUiSmallMarginEnd"
-                />
+                    class="sapUiSmallMarginEnd"/>
                 <Label
                     id="labelDate"
                     text="{i18n>date}"
-                    class="sapUiSmallMargin"
-                />
+                    class="sapUiSmallMargin"/>
                 <DatePicker
                     id="filterDate"
                     textAlign="Initial"
                     displayFormat="dd/MM/yyyy"
                     width="200px"
-                    placeholder="por ejemplo 01/01/2024"
-                />
+                    placeholder="por ejemplo 01/01/2024"/>
                 <Button
                     id="btnFilter"
                     text="{i18n>btnFilter}"
                     icon="sap-icon://filter"
                     press="onFilter"
-                    class="sapUiSmallMarginEnd"
-                />
+                    class="sapUiSmallMarginEnd"/>
                 <Button
                     id="btnClearFilter"
                     text="{i18n>btnClearFilter}"
                     icon="sap-icon://clear-filter"
                     press="onClearFilter"
-                    class="sapUiSmallMarginEnd"
-                />
+                    class="sapUiSmallMarginEnd"/>
             </Panel>
             <Panel id="list">
 			<!-- Actualizamos el modelo para que use el modelo JSON "invoicesModel" con "facturasCombinadas" -->
-                <List
-                    id="invoicesList"
-                    headerText="{i18n>invoicesHeaderList}"
-                    class="sapUiResponsiveMargin"
-                    width="auto"
-                    items="{invoicesModel>/facturasCombinadas}">
-                    <ObjectListItem
-                        id="objListItem"
-                        title="Nombre: {invoicesModel>Descripcion}"
-                        number="{invoicesModel>GrossAmount}"
-                        numberState="{= ${invoicesModel>Estado} === 'S' ? 'Success' : ${invoicesModel>Estado} === 'W' ? 'Warning' : ${invoicesModel>Estado} === 'E' ? 'Error' : 'None' }"
-                        numberUnit="ARS">
-                        <attributes>
-                            <ObjectAttribute
-                                id="fecha"
-                                text="Fecha: {invoicesModel>Fecha}"/>
-                            <ObjectAttribute
-                                id="invNum"
-                                text="Nro. de Factura: {invoicesModel>InvoiceNumber}"/>
-                            <ObjectAttribute
-                                id="status"
-                                text="{= ${invoicesModel>Estado} === 'S' ? 'Factura PROCESADA' : ${invoicesModel>Estado} === 'W' ? 'Factura EN PROCESO' : ${invoicesModel>Estado} === 'E' ? 'Factura RECHAZADA' : 'Estado desconocido' }"/>
-                        </attributes>
-                    </ObjectListItem>
+                <List id="invoicesList"
+                      headerText="{i18n>invoicesHeaderList}"
+                      class="sapUiResponsiveMargin"
+                      width="auto"
+                      items="{invoicesModel>/facturasCombinadas}">
+                    <CustomListItem id="custList">
+                        <HBox id="Hbox" width="100%" justifyContent="SpaceBetween">
+                            <!-- ObjectListItem para mostrar información de la factura -->
+                            <VBox id="objStatus">
+                                <ObjectStatus id="descripcion"
+                                              text="Nombre: {invoicesModel>Descripcion}"
+                                              state="{= ${invoicesModel>Estado} === 'S' ? 'Success' : ${invoicesModel>Estado} === 'W' ? 'Warning' : ${invoicesModel>Estado} === 'E' ? 'Error' : 'None' }"
+                                              class="descripcion"/>
+                                <ObjectStatus id="fecha"
+                                              text="Fecha: {invoicesModel>Fecha}"
+                                              state="{= ${invoicesModel>Estado} === 'S' ? 'Success' : ${invoicesModel>Estado} === 'W' ? 'Warning' : ${invoicesModel>Estado} === 'E' ? 'Error' : 'None' }"
+                                              class="objListAtribute"/>
+                                <ObjectStatus id="nroFac"
+                                              text="Nro. de Factura: {invoicesModel>InvoiceNumber}"
+                                              state="{= ${invoicesModel>Estado} === 'S' ? 'Success' : ${invoicesModel>Estado} === 'W' ? 'Warning' : ${invoicesModel>Estado} === 'E' ? 'Error' : 'None' }"/>
+                                <ObjectStatus id="status"
+                                              text="{= ${invoicesModel>Estado} === 'S' ? 'Factura PROCESADA' : ${invoicesModel>Estado} === 'W' ? 'Factura EN PROCESO' : ${invoicesModel>Estado} === 'E' ? 'Factura RECHAZADA' : 'Estado desconocido' }"
+                                              state="{= ${invoicesModel>Estado} === 'S' ? 'Success' : ${invoicesModel>Estado} === 'W' ? 'Warning' : ${invoicesModel>Estado} === 'E' ? 'Error' : 'None' }"/>
+                            </VBox>
+                            <VBox id="rightVBox" alignItems="End">
+                                <ObjectNumber id="grossAmount"
+                                            number="{invoicesModel>GrossAmount}"
+                                            state="{= ${invoicesModel>Estado} === 'S' ? 'Success' : ${invoicesModel>Estado} === 'W' ? 'Warning' : ${invoicesModel>Estado} === 'E' ? 'Error' : 'None' }"
+                                            unit="ARS" 
+                                            class="grossAmount"/>
+                                <Button id="btnPDF" text="Ver PDF" press="onShowPdfPress">
+                                    <customData>
+                                        <core:CustomData key="pdfBase64" value="{invoicesModel>Arch_String}" writeToDom="true" />
+                                    </customData>
+                                </Button>
+                            </VBox>
+                        </HBox>
+                    </CustomListItem>
                 </List>
+                <core:HTML id="idFrame"/>
             </Panel>
         </content>
     </Page>
