@@ -145,12 +145,19 @@ sap.ui.define([
                     filterDate.setDateValue(null); // Limpiar la fecha
                 }
 
+                    // Reiniciar el filtro de estado a "Todos"
+                const statusFilter = oView.byId("statusFilter");
+                if (statusFilter) {
+                statusFilter.setSelectedKey("Estado"); // Selecciona "Todos" en el dropdown
+                }
+
                 // Obtener la lista y su binding
                 const oList = oView.byId("invoicesList");
                 const oBinding = oList.getBinding("items");
 
                 // Aplicar un filtro vacío para limpiar la lista
                 oBinding.filter([]);
+                oBinding.sort(null);
             },
 
         // Método para manejar el evento de mostrar PDF
@@ -191,6 +198,69 @@ sap.ui.define([
             }
 
             this.oDialog.open();
+        },
+
+        removeFileExtension: function(fileName) {
+            return fileName.substring(0, fileName.lastIndexOf('.'));
+        },
+
+        onOpenSortOptions: function (oEvent) {
+            // Crear el ActionSheet solo la primera vez que se necesita
+            if (!this.sortOptionsSheet) {
+                this.sortOptionsSheet = new sap.m.ActionSheet({
+                    title: "Ordenar Por",
+                    showCancelButton: true,
+                    buttons: [
+                        new sap.m.Button({
+                            text: "Mayor a Menor",
+                            press: this.onSortDescending.bind(this)
+                        }),
+                        new sap.m.Button({
+                            text: "Menor a Mayor",
+                            press: this.onSortAscending.bind(this)
+                        })
+                    ]
+                });
+        
+                // Agregar el ActionSheet a la vista actual para el ciclo de vida
+                this.getView().addDependent(this.sortOptionsSheet);
+            }
+        
+            // Abrir el ActionSheet en el botón que activó el evento
+            this.sortOptionsSheet.openBy(oEvent.getSource());
+        },
+        
+        onSortDescending: function () {
+            const oList = this.getView().byId("invoicesList");
+            const oBinding = oList.getBinding("items");
+        
+            // Crear un sorter que ordene en orden descendente
+            const oSorter = new sap.ui.model.Sorter("GrossAmount", true);
+            oBinding.sort(oSorter);
+        },
+        
+        onSortAscending: function () {
+            const oList = this.getView().byId("invoicesList");
+            const oBinding = oList.getBinding("items");
+        
+            // Crear un sorter que ordene en orden ascendente
+            const oSorter = new sap.ui.model.Sorter("GrossAmount", false);
+            oBinding.sort(oSorter);
+        },
+
+        onStatusFilterChange: function (oEvent) {
+            const selectedKey = oEvent.getParameter("selectedItem").getKey(); // Obtiene el valor seleccionado
+            const oList = this.getView().byId("invoicesList"); // Obtén la lista de facturas
+            const oBinding = oList.getBinding("items"); // Obtén el binding de los ítems de la lista
+            const aFilters = [];
+        
+            // Si el usuario selecciona un estado específico, agregamos un filtro
+            if (selectedKey) {
+                aFilters.push(new sap.ui.model.Filter("Estado", sap.ui.model.FilterOperator.EQ, selectedKey));
+            }
+        
+            // Aplica el filtro a la lista
+            oBinding.filter(aFilters);
         }
         
         });
