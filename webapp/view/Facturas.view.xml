@@ -40,9 +40,12 @@
                     displayFormat="dd/MM/yyyy"
                     width="200px"
                     placeholder="por ejemplo 01/01/2024"/>
+                <Label id="estado"
+                        text="{i18n>status}"
+                        class="sapUiSmallMargin"/>
                 <Select id="statusFilter" change="onStatusFilterChange" width="200px">
                     <items>
-                        <core:Item id="todos"     key="" text="Estado" /> <!-- Muestra todas las facturas -->
+                        <core:Item id="todos"     key="todos" text="Todos"/> <!-- Muestra todas las facturas -->
                         <core:Item id="procesada" key="S" text="Procesada" />
                         <core:Item id="enProceso" key="W" text="En Proceso" />
                         <core:Item id="rechazada" key="E" text="Rechazada" />
@@ -70,7 +73,9 @@
                       headerText="{i18n>invoicesHeaderList}"
                       class="sapUiResponsiveMargin"
                       width="auto"
-                      items="{invoicesModel>/facturasCombinadas}">
+                      items="{invoicesModel>/facturasCombinadas}"
+                      growingThreshold="10"
+                      growingScrollToLoad="true">
                     <CustomListItem id="custList">
                         <HBox id="Hbox" width="100%" justifyContent="SpaceBetween" class="sapUiResponsiveMargin">
                             <!-- ObjectListItem para mostrar información de la factura -->
@@ -79,15 +84,15 @@
                                               text="{path: 'invoicesModel>Descripcion', formatter: '.removeFileExtension'}"
                                               state="{= ${invoicesModel>Estado} === 'S' ? 'Success' : ${invoicesModel>Estado} === 'W' ? 'Warning' : ${invoicesModel>Estado} === 'E' ? 'Error' : 'None' }"
                                               class="descripcion"/>
+                                <ObjectStatus id="status"
+                                              text="{= ${invoicesModel>Estado} === 'S' ? 'Estado: PROCESADA' : ${invoicesModel>Estado} === 'W' ? 'Estado: EN PROCESO' : ${invoicesModel>Estado} === 'E' ? 'Estado: RECHAZADA' : 'Estado: ENVIADO' }"
+                                              state="{= ${invoicesModel>Estado} === 'S' ? 'Success' : ${invoicesModel>Estado} === 'W' ? 'Warning' : ${invoicesModel>Estado} === 'E' ? 'Error' : 'None' }"/>
                                 <ObjectStatus id="fecha"
                                               text="Fecha: {invoicesModel>Fecha}"
                                               state="{= ${invoicesModel>Estado} === 'S' ? 'Success' : ${invoicesModel>Estado} === 'W' ? 'Warning' : ${invoicesModel>Estado} === 'E' ? 'Error' : 'None' }"
                                               class="objListAtribute"/>
                                 <ObjectStatus id="nroFac"
                                               text="Nro. de Factura: {invoicesModel>InvoiceNumber}"
-                                              state="{= ${invoicesModel>Estado} === 'S' ? 'Success' : ${invoicesModel>Estado} === 'W' ? 'Warning' : ${invoicesModel>Estado} === 'E' ? 'Error' : 'None' }"/>
-                                <ObjectStatus id="status"
-                                              text="{= ${invoicesModel>Estado} === 'S' ? 'Factura PROCESADA' : ${invoicesModel>Estado} === 'W' ? 'Factura EN PROCESO' : ${invoicesModel>Estado} === 'E' ? 'Factura RECHAZADA' : 'Estado desconocido' }"
                                               state="{= ${invoicesModel>Estado} === 'S' ? 'Success' : ${invoicesModel>Estado} === 'W' ? 'Warning' : ${invoicesModel>Estado} === 'E' ? 'Error' : 'None' }"/>
                             </VBox>
                             <VBox id="rightVBox" alignItems="End" class="sapUiResponsiveMargin">

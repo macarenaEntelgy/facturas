@@ -15,20 +15,20 @@ sap.ui.define([
 
             postData: function () {
                 let oView = this.getView();
-            
+
                 // Verificar si el modelo está disponible
                 var oModelPDF = oView.getModel();
                 var oModelDatos = oView.getModel();
-            
+
                 // Verificar si es el modelo correcto
                 if (!oModelPDF || !oModelDatos) {
                     console.error("No se pudo obtener el modelo OData. Verifique la configuración del modelo.");
                     return;
                 }
-            
+
                 let listaPDF = [];
                 let listaDatos = [];
-            
+
                 // Obtener el binding de la lista para OData V4
                 try {
                     var oListBindingPDF = oModelPDF.bindList("/Consulta_PDF");
@@ -37,7 +37,7 @@ sap.ui.define([
                     console.error("Error al obtener el binding de la lista: ", error);
                     return;
                 }
-            
+
                 // Ejecutar ambas solicitudes usando Promise.all para esperar a que ambas terminen
                 Promise.all([
                     oListBindingPDF.requestContexts().then(function (aContextsPDF) {
@@ -53,16 +53,16 @@ sap.ui.define([
                 ]).then(() => {
                     console.log('Lista PDF:', listaPDF);
                     console.log('Lista Datos:', listaDatos);
-            
+
                     let finalList = this.combinarListas(listaPDF, listaDatos);
-            
+
                     console.log('Lista final combinada:', finalList);
-            
+
                     let oJSONModel = new JSONModel();
                     oJSONModel.setData({ facturasCombinadas: finalList });
-            
+
                     oView.setModel(oJSONModel, "invoicesModel");
-            
+
                 }).catch(function (oError) {
                     console.error("Error al obtener los datos:", oError);
                 });
@@ -76,21 +76,36 @@ sap.ui.define([
                 lista1.forEach(item1 => {
                     // Buscar el elemento en la segunda lista (documentos) que tenga el mismo ID
                     const item2 = lista2.find(item2 => item1.Datos === item2.ID);
-                                 
 
-                    // Si encontramos una coincidencia en los IDs, combinamos los datos
-                    if (item2) {
-                        const nuevoObjeto = {
-                            Descripcion: item1.Descripcion,   // Atributo desde lista1
-                            Fecha: item1.Fecha,               // Atributo desde lista1
-                            Estado: item1.Estado,             // Atributo desde lista1
-                            Arch_String: item1.Arch_String,   // Atributo desde lista1
-                            GrossAmount: item2.GrossAmount,   // Atributo desde lista2
-                            InvoiceNumber: item2.InvoiceNumber // Atributo desde lista2
+                    // Crear un nuevo objeto con datos de item1 y, si existe, datos de item2
+                    const nuevoObjeto = {
+                          Descripcion: item1.Descripcion,
+                          Fecha: item1.Fecha,
+                          Estado: item1.Estado,
+                          Arch_String: item1.Arch_String,
+                          GrossAmount: item2 ? item2.GrossAmount : null,
+                          InvoiceNumber: item2 ? item2.InvoiceNumber : null
                         };
 
-                        // Añadir el nuevo objeto a la lista filtrada
-                        listaFiltrada.push(nuevoObjeto);
+                    // Añadir el nuevo objeto a la lista filtrada
+                    listaFiltrada.push(nuevoObjeto);
+                });
+
+                // Agregar elementos de lista2 que no tienen coincidencias en lista1
+                lista2.forEach(item2 => {
+                    // Verificar si ya existe en listaFiltrada por ID
+                    const existeEnListaFiltrada = listaFiltrada.some(item => item.InvoiceNumber === item2.InvoiceNumber);
+
+                    // Si no existe, añadirlo con valores de lista2 y null en campos de lista1
+                    if (!existeEnListaFiltrada) {
+                        listaFiltrada.push({
+                            Descripcion: null,
+                            Fecha: null,
+                            Estado: null,
+                            Arch_String: null,
+                            GrossAmount: item2.GrossAmount,
+                            InvoiceNumber: item2.InvoiceNumber
+                        });
                     }
                 });
 
@@ -145,10 +160,15 @@ sap.ui.define([
                     filterDate.setDateValue(null); // Limpiar la fecha
                 }
 
-                    // Reiniciar el filtro de estado a "Todos"
+                const invoiceNumber = oView.byId("invoiceNumber");
+                if (invoiceNumber) {
+                    invoiceNumber.setValue("");
+                }
+
+                // Reiniciar el filtro de estado a "Todos"
                 const statusFilter = oView.byId("statusFilter");
                 if (statusFilter) {
-                statusFilter.setSelectedKey("Estado"); // Selecciona "Todos" en el dropdown
+                    statusFilter.setSelectedKey("Estado"); // Selecciona "Todos" en el dropdown
                 }
 
                 // Obtener la lista y su binding
@@ -160,109 +180,109 @@ sap.ui.define([
                 oBinding.sort(null);
             },
 
-        // Método para manejar el evento de mostrar PDF
-        onShowPdfPress: function (oEvent) {
-            // Obtener la codificación Base64 desde el CustomData del botón
-            var sPdfBase64 = oEvent.getSource().data("pdfBase64");
+            // Método para manejar el evento de mostrar PDF
+            onShowPdfPress: function (oEvent) {
+                // Obtener la codificación Base64 desde el CustomData del botón
+                var sPdfBase64 = oEvent.getSource().data("pdfBase64");
 
-            if (!sPdfBase64) {
-                MessageToast.show("No se encontró el PDF para esta factura.");
-                return;
-            }
+                if (!sPdfBase64) {
+                    MessageToast.show("No se encontró el PDF para esta factura.");
+                    return;
+                }
 
-            // Crear la URL del PDF en formato base64
-            var sPdfUrl = "data:application/pdf;base64," + sPdfBase64;
+                // Crear la URL del PDF en formato base64
+                var sPdfUrl = "data:application/pdf;base64," + sPdfBase64;
 
-            // Crear un iframe para mostrar el PDF en un diálogo modal
-            if (!this.oDialog) {
-                this.oDialog = new sap.m.Dialog({
-                    title: "Vista Previa de la Factura",
-                    contentWidth: "100%",
-                    contentHeight: "100%",
-                    verticalScrolling: false,
-                    horizontalScrolling: false,
-                    resizable: true,
-                    content: new sap.ui.core.HTML({
-                        content: "<iframe src='" + sPdfUrl + "' width='100%' height='100%' style='border:none;'></iframe>"
-                    }),
-                    endButton: new sap.m.Button({
-                        text: "Cerrar",
-                        press: function () {
-                            this.oDialog.close();
-                        }.bind(this)
-                    })
-                });
-            } else {
-                // Actualizar el contenido del iframe en caso de que el diálogo ya exista
-                this.oDialog.getContent()[0].setContent("<iframe src='" + sPdfUrl + "' width='100%' height='100%' style='border:none;'></iframe>");
-            }
-
-            this.oDialog.open();
-        },
-
-        removeFileExtension: function(fileName) {
-            return fileName.substring(0, fileName.lastIndexOf('.'));
-        },
-
-        onOpenSortOptions: function (oEvent) {
-            // Crear el ActionSheet solo la primera vez que se necesita
-            if (!this.sortOptionsSheet) {
-                this.sortOptionsSheet = new sap.m.ActionSheet({
-                    title: "Ordenar Por",
-                    showCancelButton: true,
-                    buttons: [
-                        new sap.m.Button({
-                            text: "Mayor a Menor",
-                            press: this.onSortDescending.bind(this)
+                // Crear un iframe para mostrar el PDF en un diálogo modal
+                if (!this.oDialog) {
+                    this.oDialog = new sap.m.Dialog({
+                        title: "Vista Previa de la Factura",
+                        contentWidth: "100%",
+                        contentHeight: "100%",
+                        verticalScrolling: false,
+                        horizontalScrolling: false,
+                        resizable: true,
+                        content: new sap.ui.core.HTML({
+                            content: "<iframe src='" + sPdfUrl + "' width='100%' height='100%' style='border:none;'></iframe>"
                         }),
-                        new sap.m.Button({
-                            text: "Menor a Mayor",
-                            press: this.onSortAscending.bind(this)
+                        endButton: new sap.m.Button({
+                            text: "Cerrar",
+                            press: function () {
+                                this.oDialog.close();
+                            }.bind(this)
                         })
-                    ]
-                });
-        
-                // Agregar el ActionSheet a la vista actual para el ciclo de vida
-                this.getView().addDependent(this.sortOptionsSheet);
-            }
-        
-            // Abrir el ActionSheet en el botón que activó el evento
-            this.sortOptionsSheet.openBy(oEvent.getSource());
-        },
-        
-        onSortDescending: function () {
-            const oList = this.getView().byId("invoicesList");
-            const oBinding = oList.getBinding("items");
-        
-            // Crear un sorter que ordene en orden descendente
-            const oSorter = new sap.ui.model.Sorter("GrossAmount", true);
-            oBinding.sort(oSorter);
-        },
-        
-        onSortAscending: function () {
-            const oList = this.getView().byId("invoicesList");
-            const oBinding = oList.getBinding("items");
-        
-            // Crear un sorter que ordene en orden ascendente
-            const oSorter = new sap.ui.model.Sorter("GrossAmount", false);
-            oBinding.sort(oSorter);
-        },
+                    });
+                } else {
+                    // Actualizar el contenido del iframe en caso de que el diálogo ya exista
+                    this.oDialog.getContent()[0].setContent("<iframe src='" + sPdfUrl + "' width='100%' height='100%' style='border:none;'></iframe>");
+                }
 
-        onStatusFilterChange: function (oEvent) {
-            const selectedKey = oEvent.getParameter("selectedItem").getKey(); // Obtiene el valor seleccionado
-            const oList = this.getView().byId("invoicesList"); // Obtén la lista de facturas
-            const oBinding = oList.getBinding("items"); // Obtén el binding de los ítems de la lista
-            const aFilters = [];
-        
-            // Si el usuario selecciona un estado específico, agregamos un filtro
-            if (selectedKey) {
-                aFilters.push(new sap.ui.model.Filter("Estado", sap.ui.model.FilterOperator.EQ, selectedKey));
+                this.oDialog.open();
+            },
+
+            removeFileExtension: function (fileName) {
+                return fileName.substring(0, fileName.lastIndexOf('.'));
+            },
+
+            onOpenSortOptions: function (oEvent) {
+                // Crear el ActionSheet solo la primera vez que se necesita
+                if (!this.sortOptionsSheet) {
+                    this.sortOptionsSheet = new sap.m.ActionSheet({
+                        title: "Ordenar Por",
+                        showCancelButton: true,
+                        buttons: [
+                            new sap.m.Button({
+                                text: "Mayor a Menor",
+                                press: this.onSortDescending.bind(this)
+                            }),
+                            new sap.m.Button({
+                                text: "Menor a Mayor",
+                                press: this.onSortAscending.bind(this)
+                            })
+                        ]
+                    });
+
+                    // Agregar el ActionSheet a la vista actual para el ciclo de vida
+                    this.getView().addDependent(this.sortOptionsSheet);
+                }
+
+                // Abrir el ActionSheet en el botón que activó el evento
+                this.sortOptionsSheet.openBy(oEvent.getSource());
+            },
+
+            onSortDescending: function () {
+                const oList = this.getView().byId("invoicesList");
+                const oBinding = oList.getBinding("items");
+
+                // Crear un sorter que ordene en orden descendente
+                const oSorter = new sap.ui.model.Sorter("GrossAmount", true);
+                oBinding.sort(oSorter);
+            },
+
+            onSortAscending: function () {
+                const oList = this.getView().byId("invoicesList");
+                const oBinding = oList.getBinding("items");
+
+                // Crear un sorter que ordene en orden ascendente
+                const oSorter = new sap.ui.model.Sorter("GrossAmount", false);
+                oBinding.sort(oSorter);
+            },
+
+            onStatusFilterChange: function (oEvent) {
+                const selectedKey = oEvent.getParameter("selectedItem").getKey(); // Obtiene el valor seleccionado
+                const oList = this.getView().byId("invoicesList"); // Obtén la lista de facturas
+                const oBinding = oList.getBinding("items"); // Obtén el binding de los ítems de la lista
+                const aFilters = [];
+
+                // Si el usuario selecciona un estado específico, agregamos un filtro
+                if (selectedKey) {
+                    aFilters.push(new sap.ui.model.Filter("Estado", sap.ui.model.FilterOperator.EQ, selectedKey));
+                }
+
+                // Aplica el filtro a la lista
+                oBinding.filter(aFilters);
             }
-        
-            // Aplica el filtro a la lista
-            oBinding.filter(aFilters);
-        }
-        
+
         });
     }
 );
