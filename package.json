@@ -8,14 +8,14 @@
     "sapui5"
   ],
   "main": "webapp/index.html",
-  "dependencies": {},
   "devDependencies": {
-    "@ui5/cli": "^3.0.0",
-    "@sap/ux-ui5-tooling": "1",
     "@sap-ux/ui5-middleware-fe-mockserver": "2",
     "@sap/ui5-builder-webide-extension": "^1.1.9",
-    "ui5-task-zipper": "^3.1.3",
-    "mbt": "^1.2.27"
+    "@sap/ux-ui5-tooling": "1",
+    "@ui5/cli": "^3.0.0",
+    "mbt": "^1.2.27",
+    "rimraf": "^6.0.1",
+    "ui5-task-zipper": "^3.1.3"
   },
   "scripts": {
     "start": "fiori run --open \"test/flpSandbox.html?sap-ui-xx-viewCache=false#devfacturas-display\"",
@@ -29,7 +29,7 @@
     "unit-tests": "fiori run --config ./ui5-mock.yaml --open 'test/unit/unitTests.qunit.html'",
     "int-tests": "fiori run --config ./ui5-mock.yaml --open 'test/integration/opaTests.qunit.html'",
     "build:cf": "ui5 build preload --clean-dest --config ui5-deploy.yaml --include-task=generateCachebusterInfo",
-    "build:mta": "rimraf resources mta_archives && mbt build",
+    "build:mta": "rimraf resources mta_archives && mbt build --mtar devfacturas_0.0.1.mtar",
     "undeploy": "cf undeploy devfacturas --delete-services --delete-service-keys --delete-service-brokers"
   },
   "sapuxLayer": "CUSTOMER_BASE"
