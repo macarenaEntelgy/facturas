@@ -1,5 +1,5 @@
 {
-  "xsappname": "devfacturas",
+  "xsappname": "devfacturascopia",
   "tenant-mode": "dedicated",
   "description": "Security profile of called application",
   "scopes": [],

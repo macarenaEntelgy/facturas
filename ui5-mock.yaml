@@ -2,7 +2,7 @@
 
 specVersion: "3.1"
 metadata:
-  name: dev.facturas
+  name: dev.facturas.copia
 type: application
 server:
   customMiddleware:
@@ -17,7 +17,11 @@ server:
           url: https://ui5.sap.com
         backend:
           - path: /odata
-            url: https://eca0c625trial-dev-hanaapp.cfapps.us10-001.hana.ondemand.com
+            url: https://dcl-consultores-eim-s-l-btp-invoice-argentina-data-base28558645.cfapps.us10-001.hana.ondemand.com
+          - path: /DMS
+            pathPrefix: /
+            url: https://api-sdm-di.cfapps.eu10.hana.ondemand.com/browser/e1645785-7b64-4b7d-9cdd-af2ba6634166/root
+            destination: DMS
     - name: fiori-tools-appreload
       afterMiddleware: compression
       configuration:
@@ -27,14 +31,14 @@ server:
     - name: fiori-tools-preview
       afterMiddleware: fiori-tools-appreload
       configuration:
-        component: dev.facturas
+        component: dev.facturas.copia
         ui5Theme: sap_horizon
     - name: sap-fe-mockserver
       beforeMiddleware: csp
       configuration:
         mountPath: /
         services:
-          - urlPath: /odata/v4/portal
+          - urlPath: /odata/v4/portal/
             metadataPath: ./webapp/localService/metadata.xml
             mockdataPath: ./webapp/localService/data
             generateMockData: true

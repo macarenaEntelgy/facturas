@@ -1,19 +1,15 @@
-HEAD
-# facturas
-Lista de Facturas desde template LIST de SAPUI5
-
 ## Application Details
 |               |
 | ------------- |
-|**Generation Date and Time**<br>Mon Oct 21 2024 20:20:36 GMT+0000 (Coordinated Universal Time)|
+|**Generation Date and Time**<br>Tue Dec 10 2024 15:23:43 GMT+0000 (Coordinated Universal Time)|
 |**App Generator**<br>@sap/generator-fiori-freestyle|
-|**App Generator Version**<br>1.15.2|
+|**App Generator Version**<br>1.15.7|
 |**Generation Platform**<br>SAP Business Application Studio|
 |**Template Used**<br>simple|
 |**Service Type**<br>OData Url|
-|**Service URL**<br>https://eca0c625trial-dev-hanaapp.cfapps.us10-001.hana.ondemand.com/odata/v4/portal|
-|**Module Name**<br>facturas|
-|**Application Title**<br>Facturas|
+|**Service URL**<br>https://dcl-consultores-eim-s-l-btp-invoice-argentina-data-base28558645.cfapps.us10-001.hana.ondemand.com/odata/v4/portal/|
+|**Module Name**<br>facturas.copia|
+|**Application Title**<br>Consulta de Facturas Ingresadas|
 |**Namespace**<br>dev|
 |**UI5 Theme**<br>sap_horizon|
 |**UI5 Version**<br>1.124.1|
@@ -21,9 +17,9 @@ Lista de Facturas desde template LIST de SAPUI5
 |**Enable TypeScript**<br>False|
 |**Add Eslint configuration**<br>False|
 
-## facturas
+## facturas.copia
 
-Facturas Proveedores
+Consulta de Facturas Ingresadas
 
 ### Starting the generated app
 
@@ -44,4 +40,3 @@ Facturas Proveedores
 1. Active NodeJS LTS (Long Term Support) version and associated supported NPM version.  (See https://nodejs.org)
 
 
-main
