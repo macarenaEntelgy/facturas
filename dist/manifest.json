@@ -1,0 +1,135 @@
+{
+    "_version": "1.64.0",
+    "sap.app": {
+        "id": "dev.facturas.copia",
+        "type": "application",
+        "i18n": "i18n/i18n.properties",
+        "applicationVersion": {
+            "version": "0.0.1"
+        },
+        "title": "{{appTitle}}",
+        "description": "{{appDescription}}",
+        "resources": "resources.json",
+        "sourceTemplate": {
+            "id": "@sap/generator-fiori:basic",
+            "version": "1.15.7",
+            "toolsId": "0587cec6-9881-410b-bada-75ebb6c7f950"
+        },
+        "dataSources": {
+            "mainService": {
+                "uri": "odata/v4/portal/",
+                "type": "OData",
+                "settings": {
+                    "annotations": [],
+                    "localUri": "localService/metadata.xml",
+                    "odataVersion": "4.0"
+                }
+            }
+        },
+        "crossNavigation": {
+            "inbounds": {
+                "consultaFacutrasCopia-display": {
+                    "semanticObject": "consultaFacutrasCopia",
+                    "action": "display",
+                    "title": "{{flpTitle}}",
+                    "signature": {
+                        "parameters": {},
+                        "additionalParameters": "allowed"
+                    }
+                }
+            }
+        }
+    },
+    "sap.ui": {
+        "technology": "UI5",
+        "icons": {
+            "icon": "",
+            "favIcon": "",
+            "phone": "",
+            "phone@2": "",
+            "tablet": "",
+            "tablet@2": ""
+        },
+        "deviceTypes": {
+            "desktop": true,
+            "tablet": true,
+            "phone": true
+        }
+    },
+    "sap.ui5": {
+        "flexEnabled": true,
+        "dependencies": {
+            "minUI5Version": "1.124.1",
+            "libs": {
+                "sap.m": {},
+                "sap.ui.core": {},
+                "sap.ui.table": {}
+            }
+        },
+        "contentDensities": {
+            "compact": true,
+            "cozy": true
+        },
+        "models": {
+            "i18n": {
+                "type": "sap.ui.model.resource.ResourceModel",
+                "settings": {
+                    "bundleName": "dev.facturas.copia.i18n.i18n"
+                }
+            },
+            "": {
+                "dataSource": "mainService",
+                "preload": true,
+                "settings": {
+                    "operationMode": "Server",
+                    "autoExpandSelect": true,
+                    "earlyRequests": true
+                }
+            }
+        },
+        "resources": {
+            "css": [
+                {
+                    "uri": "css/style.css"
+                }
+            ]
+        },
+        "routing": {
+            "config": {
+                "routerClass": "sap.m.routing.Router",
+                "controlAggregation": "pages",
+                "controlId": "app",
+                "transition": "slide",
+                "type": "View",
+                "viewType": "XML",
+                "path": "dev.facturas.copia.view",
+                "async": true,
+                "viewPath": "dev.facturas.copia.view"
+            },
+            "routes": [
+                {
+                    "name": "RoutefacturasCopia",
+                    "pattern": ":?query:",
+                    "target": [
+                        "TargetfacturasCopia"
+                    ]
+                }
+            ],
+            "targets": {
+                "TargetfacturasCopia": {
+                    "id": "facturasCopia",
+                    "name": "facturasCopia"
+                }
+            }
+        },
+        "rootView": {
+            "viewName": "dev.facturas.copia.view.App",
+            "type": "XML",
+            "id": "App"
+        }
+    },
+    "sap.cloud": {
+        "public": true,
+        "service": "devfacturascopia"
+    }
+}

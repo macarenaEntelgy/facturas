@@ -1,0 +1,174 @@
+<mvc:View controllerName="dev.facturas.copia.controller.facturasCopia"
+		xmlns:cards="sap.f.cards"
+		xmlns:rowmodes="sap.ui.table.rowmodes"
+		xmlns="sap.ui.table"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:u="sap.ui.unified"
+		xmlns:c="sap.ui.core"
+		xmlns:m="sap.m"
+		height="100%">
+	<m:Page
+		id="page"
+		class="sapUiContentPadding"
+		title="{i18n>selectionScreen}"
+		enableScrolling="true">
+		<m:content>
+			<m:Panel id="panel">
+			
+				<m:Label 
+					id="labelInvoiceNumber"
+					labelFor="invoiceNumber"
+					text="{i18n>invoiceNumber}"
+					class="sapUiSmallMargin"
+					design="Bold"/>
+				<m:Input 
+					id="invoiceNumber" 
+					width="100px"/>
+				
+				<m:Label 
+					id="labelDate"
+					text="{i18n>date}"
+                    class="sapUiSmallMargin"
+					design="Bold"/>
+				<m:DatePicker 
+					id="dateFrom"
+					textAlign="Initial"
+					displayFormat="dd/MM/yyyy"
+					valueFormat="yyyy/MM/dd"
+					width="150px"
+					placeholder="ej: 01/01/2024"/>
+
+				<m:Label 
+					id="laberDateTo"
+					text="{i18n>dateTo}"
+					class="sapUiSmallMargin"
+					design="Bold"/>
+				<m:DatePicker 
+					id="dateTo"
+					textAlign="Initial"
+					displayFormat="dd/MM/yyyy"
+                    valueFormat="yyyy-MM-dd"
+                    width="150px"
+                    placeholder="ej: 01/01/2024"/>
+
+				<m:Label 
+					id="status"
+					text="{i18n>status}"
+					class="sapUiSmallMargin"
+					design="Bold"/>
+				<m:Select id="statusFilter" change="onStatusFilterChange" width="102px" >
+					<m:items>
+						<c:Item id="estado"    key="estado" text="{i18n>todos}"/>
+						<c:Item id="procesada" key="S"      text="{i18n>procesada}"/>
+						<c:Item id="enProceso" key="W"      text="{i18n>enPreceso}"/>
+						<c:Item id="rechazada" key="E"      text="{i18n>rechazada}"/>
+					</m:items>
+				</m:Select>
+
+				<m:Button 
+					id="btnFilter"
+					text="{i18n>btnFilter}"
+                    icon="sap-icon://filter"
+                    press="onFilter"
+                    class="sapUiSmallMarginEnd"/>
+				<m:Button 
+					id="btnClearFilter"
+					text="{i18n>btnClearFilter}"
+                    icon="sap-icon://clear-filter"
+                    press="onClearFilter"
+                    class="sapUiSmallMarginEnd"/>
+					
+				<Table
+					id="invoicesList"
+					class="sapUiResponsiveMargin table"
+					selectionMode="None"
+					rows="{ path: '/Datos_Extraidos', 
+							sorter: {path:'fecha_emision', descending: true}
+						  }"
+					ariaLabelledBy="title"
+					enableBusyIndicator="true"
+					alternateRowColors="true"
+					enableColumnReordering="true"
+					threshold="100"
+					visibleRowCount="14">
+					<columns>
+						<Column
+							id="nroFac"
+							sortProperty="punto_venta"
+							hAlign="Center"
+							>
+							<m:Label id="lblNroFac" text="{i18n>nroFactura}"/>
+							<template>
+								<m:Text id="txtNroFac" text="{ parts: [ {path: 'punto_venta'}, {path: 'letra'}, {path: 'numero_comprobante'} ],
+															   formatter: '.concatenarValores' }"/>
+							</template>
+						</Column>
+						<Column
+							id="deliverydate"
+							sortProperty="fecha_emision"
+							hAlign="Center">
+							<m:Label id="lblFecha" text="{i18n>fecha}" />
+							<template>
+								<m:Text id="fecha" text="{
+									path: 'fecha_emision',
+									type: 'sap.ui.model.type.Date',
+									formatOptions: {source: {pattern: 'dd/MM/yyyy'}, style: 'short'}
+								}" wrapping="false" />
+							</template>
+						</Column>
+						<Column
+							id="monto"
+							sortProperty="total"
+							hAlign="Center">
+							<m:Label id="lblImporte" text="{i18n>importe}" />
+							<template>
+								<m:Label id="cellTotal" text="{ parts:['total',''],
+                                                           type:'sap.ui.model.type.Currency',
+                                                           formatOptions:{currencyCode: false}
+                                                            }" />
+							</template>
+						</Column>
+						<Column
+							id="colEstado"
+							sortProperty="estado" 
+							hAlign="Center">
+							<m:Label id="lblEstado" text="{i18n>estadoFactura}" />
+							<template>
+								<m:ObjectStatus id="cellStatus"
+									text="{= ${estado} === 'S' ? 'Factura procesada' : ${estado} === 'E' ? 'Factura rechazada' : 'Factura en proceso'}"
+									icon="{= ${estado} === 'S' ? 'sap-icon://accept' : ${estado} === 'E' ? 'sap-icon://error' : 'sap-icon://status-in-process'}"
+									state="{= ${estado} === 'S' ? 'Success' : ${estado} === 'E' ? 'Error' : 'Warning'}" />
+							</template>
+						</Column>
+						<Column 
+							id="razon" 
+							hAlign="Center">
+							<m:Label id="lblRazon" text="{i18n>motivoRechazo}" />
+							<template>
+								<m:ObjectStatus id="cellRazon" 
+									text="{= ${estado} === 'E' ? ${razon} : '' }" 
+									icon="{= ${estado} === 'W' ? 'sap-icon://less' : '' }{= ${estado} === 'S' ? 'sap-icon://less' : '' }"/>
+							</template>
+						</Column>
+						<Column id="col" width="5rem" hAlign="Center">
+							<m:Label id="lblPdf" text="{i18n>verPdf}" />
+							<template>
+								<m:Button 
+									id="btnPdf"
+									icon="sap-icon://pdf-attachment"
+									press="onShowPdfPress"
+									/>
+							</template>
+						</Column>
+						<Column id="idArchivo" width="0rem">
+							<template>
+								<m:Text id="txtIdArchivo" text="{id_archivo}" visible="false"/>
+							</template>
+						</Column>
+					</columns>
+				</Table>
+				<c:HTML id="idFrame"/>
+			</m:Panel>
+		</m:content>
+	</m:Page>
+</mvc:View>

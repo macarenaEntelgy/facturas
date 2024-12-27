@@ -1,0 +1,23 @@
+{
+  "Component-preload.js": 1735043035674,
+  "controller/App.controller.js": 1733844224433,
+  "controller/facturasCopia.controller.js": 1735043019570,
+  "model/models.js": 1733844224433,
+  "manifest.json": 1735043035453,
+  "Component.js": 1733922613669,
+  "controller/facturasCopia-dbg.controller.js": 1735043019570,
+  "controller/facturasCopia.controller.js.map": 1735043035598,
+  "controller/App-dbg.controller.js": 1733844224433,
+  "controller/App.controller.js.map": 1735043035565,
+  "model/models-dbg.js": 1733844224433,
+  "model/models.js.map": 1735043035567,
+  "Component-dbg.js": 1733922613669,
+  "Component.js.map": 1735043035568,
+  "i18n/i18n.properties": 1734022539344,
+  "Component-preload.js.map": 1735043035674,
+  "view/facturasCopia.view.xml": 1734980001719,
+  "view/App.view.xml": 1733844224437,
+  "i18n/i18n.properties_es": 1734537489626,
+  "css/style.css": 1734633227823,
+  "index.html": 1733844224425
+}

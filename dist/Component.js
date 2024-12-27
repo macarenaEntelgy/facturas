@@ -1,0 +1,2 @@
+sap.ui.define(["sap/ui/core/UIComponent","dev/facturas/copia/model/models"],(e,t)=>{"use strict";return e.extend("dev.facturas.copia.Component",{metadata:{manifest:"json",interfaces:["sap.ui.core.IAsyncContentCreation"]},init(){e.prototype.init.apply(this,arguments);this.getRouter().initialize();this.setModel(t.createDeviceModel(),"device")}})});
+//# sourceMappingURL=Component.js.map
