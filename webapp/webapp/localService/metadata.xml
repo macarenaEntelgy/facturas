@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Common.xml">
+        <edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Core.V1.xml">
+        <edmx:Include Alias="Core" Namespace="Org.OData.Core.V1"/>
+    </edmx:Reference>
+    <edmx:DataServices>
+        <Schema Namespace="PortalService" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+            <Annotation Term="Core.Links">
+                <Collection>
+                    <Record>
+                        <PropertyValue Property="rel" String="author"/>
+                        <PropertyValue Property="href" String="https://cap.cloud.sap"/>
+                    </Record>
+                </Collection>
+            </Annotation>
+            <EntityContainer Name="EntityContainer">
+                <EntitySet Name="Datos_Extraidos" EntityType="PortalService.Datos_Extraidos">
+                    <NavigationPropertyBinding Path="toItems" Target="Items"/>
+                </EntitySet>
+                <EntitySet Name="Items" EntityType="PortalService.Items">
+                    <NavigationPropertyBinding Path="parent" Target="Datos_Extraidos"/>
+                </EntitySet>
+            </EntityContainer>
+            <EntityType Name="Datos_Extraidos">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.Int32" Nullable="false"/>
+                <Property Name="cuit" Type="Edm.String"/>
+                <Property Name="punto_venta" Type="Edm.String"/>
+                <Property Name="subtotal" Type="Edm.Decimal" Scale="variable"/>
+                <Property Name="total" Type="Edm.Decimal" Scale="variable"/>
+                <Property Name="fecha_emision" Type="Edm.Date"/>
+                <Property Name="numero_comprobante" Type="Edm.String"/>
+                <Property Name="letra" Type="Edm.String"/>
+                <Property Name="orden_compra" Type="Edm.String"/>
+                <Property Name="razon" Type="Edm.String"/>
+                <Property Name="nro_proveedor" Type="Edm.String"/>
+                <Property Name="nombre_proveedor" Type="Edm.String"/>
+                <Property Name="sociedad" Type="Edm.String" MaxLength="4"/>
+                <Property Name="nombre_sociedad" Type="Edm.String"/>
+                <Property Name="cuit_sociedad" Type="Edm.String"/>
+                <Property Name="actividad" Type="Edm.String"/>
+                <Property Name="importe_iva" Type="Edm.Decimal" Scale="variable"/>
+                <Property Name="tipo_impositivo" Type="Edm.String"/>
+                <Property Name="indicador_impuesto" Type="Edm.String"/>
+                <Property Name="clase_documento" Type="Edm.String"/>
+                <Property Name="fecha_contabilizacion" Type="Edm.Date"/>
+                <Property Name="condicion_pago" Type="Edm.String"/>
+                <Property Name="cod_afip" Type="Edm.String" MaxLength="4"/>
+                <Property Name="numero_cae" Type="Edm.Int32"/>
+                <Property Name="fecha_cae" Type="Edm.Date"/>
+                <Property Name="organizacion_compras" Type="Edm.String" MaxLength="4"/>
+                <Property Name="id_archivo" Type="Edm.String"/>
+                <Property Name="id_workflow" Type="Edm.String"/>
+                <Property Name="con_po" Type="Edm.String" MaxLength="1"/>
+                <Property Name="estado" Type="Edm.String" MaxLength="1"/>
+                <NavigationProperty Name="toItems" Type="Collection(PortalService.Items)" Partner="parent">
+                    <OnDelete Action="Cascade"/>
+                </NavigationProperty>
+            </EntityType>
+            <EntityType Name="Items">
+                <Key>
+                    <PropertyRef Name="ID"/>
+                </Key>
+                <Property Name="ID" Type="Edm.Guid" Nullable="false"/>
+                <NavigationProperty Name="parent" Type="PortalService.Datos_Extraidos" Partner="toItems">
+                    <ReferentialConstraint Property="parent_ID" ReferencedProperty="ID"/>
+                </NavigationProperty>
+                <Property Name="parent_ID" Type="Edm.Guid"/>
+                <Property Name="subtotal_pos" Type="Edm.Decimal" Scale="variable"/>
+                <Property Name="cantidad" Type="Edm.Int32"/>
+                <Property Name="descripcion" Type="Edm.String"/>
+            </EntityType>
+            <Annotations Target="PortalService.Datos_Extraidos/ID">
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+            </Annotations>
+            <Annotations Target="PortalService.Items/ID">
+                <Annotation Term="Core.Computed" Bool="true"/>
+                <Annotation Term="Core.ComputedDefaultValue" Bool="true"/>
+            </Annotations>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

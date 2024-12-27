@@ -1,0 +1,8 @@
+/* Enter your custom styles here */
+.table{
+    height: auto;
+}
+
+.sapUiTableHeaderDataCell{
+    background-color: gainsboro;
+}
